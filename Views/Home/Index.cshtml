@@ -1,0 +1,19 @@
+﻿<h1>Chefs | <a href="/dishes">Dishes</a></h1>
+<a href="/addChef">Add a Chef</a>
+<p>Check out our roster of Chefs!</p>
+@{
+    foreach(var chef in @Model) {
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th># of Dishes</th>
+            </tr>
+            <tr>
+                <td>@chef.FirstName @chef.LastName</td>
+                <td>1</td>
+                <td>2</td>
+            </tr>
+        </table>
+    }
+}
