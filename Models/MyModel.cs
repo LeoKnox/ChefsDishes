@@ -22,7 +22,7 @@ namespace ChefsDishes.Models
             DateTime diff2 = Convert.ToDateTime(value);
             int? diff3 = (int?) (nowDate - diff2).TotalDays;
             int? diz = diff3/365;
-            {if (diff2.Day != nowDate.Day)
+            {if (diz > 18)
                 return new ValidationResult("no no no");
             return ValidationResult.Success;
             }
