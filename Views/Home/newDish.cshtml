@@ -2,7 +2,7 @@
 
 <h2>Add a Dish!</h2>
 <a href = "/dishes">Home</a>
-<form asp-action="createDish" asp-controller="Home" method="post">
+<form asp-action="makeDish" asp-controller="Home" method="post">
     <span asp-validation-for="DishName"></span>
     <label asp-for="DishName"></label>
     <input asp-for="DishName"><br>
@@ -13,19 +13,20 @@
     <label asp-for="Description"></label>
     <input asp-for="Description"><br>
     <label asp-for="Tastiness"></label>
-    <select select asp-for="Tastiness">
+    <select asp-for="Tastiness">
         <option>1</option>
         <option>2</option>
         <option>3</option>
         <option>4</option>
         <option>5</option>
     </select><br>
-    <select>
+    <label asp-for="ChefId"></label>
+    <select asp-for="ChefId">
         @{
-            foreach (var chef in @ViewBag) {
-                <option>@chef.FirstName</option>
+            foreach (var chef in @ViewBag.cooks) {
+                <option value=@chef.ChefId>@chef.FirstName @chef.LastName</option>
             }
         }
-    </select>
+    </select><br>
     <input value="Add Dish" type = "submit">
 </form>

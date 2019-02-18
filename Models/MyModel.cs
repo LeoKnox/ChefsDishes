@@ -1,9 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChefsDishes.Models
 {
+    public class isPositiveAttribute : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {if ((int)value < 0)
+            return new ValidationResult("Must be a postivie number.");
+        return ValidationResult.Success;
+        }
+    }
+
+    public class isEighteen : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            DateTime nowDate = DateTime.Now;
+            DateTime diff2 = Convert.ToDateTime(value);
+            int? diff3 = (int?) (nowDate - diff2).TotalDays;
+            int? diz = diff3/365;
+            {if (diff2.Day != nowDate.Day)
+                return new ValidationResult("no no no");
+            return ValidationResult.Success;
+            }
+        }
+    }
     public class Chef
     {
         [Key]
@@ -18,6 +42,7 @@ namespace ChefsDishes.Models
         public String LastName {get; set;}
 
         [Required]
+        [isEighteen]
         [Display(Name = "Date of Birth")]
         public DateTime Dob {get; set;}
 
@@ -25,6 +50,14 @@ namespace ChefsDishes.Models
         public DateTime UpdatedAt {get; set;}
 
         public List<Dish> CreatedDishes {get; set;}
+
+        [NotMapped]
+        public int age 
+        {
+            get {
+                return DateTime.Now.Year - Dob.Year;
+            }
+        }
 
         public Chef ()
         {
@@ -38,10 +71,12 @@ namespace ChefsDishes.Models
         public int DishId {get; set;}
 
         [Required]
+        [MinLength(2)]
         [Display(Name = "Name of Dish")]
         public String DishName {get; set;}
 
         [Required]
+        [isPositive]
         [Display(Name = "# of Calories")]
         public int Calories {get; set;}
 

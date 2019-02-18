@@ -23,7 +23,11 @@ namespace ChefsDishes.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            List<Chef>AllChefs = dbContext.MyChefs.ToList();
+            List<Chef>AllChefs = dbContext.MyChefs.Include(d => d.CreatedDishes).ToList();
+            DateTime myDate = DateTime.Now;
+            var year = myDate.Subtract(AllChefs[0].Dob);
+            int age = myDate.Year;
+            ViewBag.age = age;
             return View("Index", AllChefs);
         }
 
@@ -38,27 +42,53 @@ namespace ChefsDishes.Controllers
         [HttpPost]
         public IActionResult createChef(Chef newChef)
         {
-            newChef.CreatedAt = DateTime.Now;
-            newChef.UpdatedAt = DateTime.Now;
-            dbContext.Add(newChef);
-            dbContext.SaveChanges();
-            return View("Index");
+            if (ModelState.IsValid) {
+                newChef.CreatedAt = DateTime.Now;
+                newChef.UpdatedAt = DateTime.Now;
+                dbContext.Add(newChef);
+                dbContext.SaveChanges();
+                return View("Index");
+            }
+            else
+            {
+                return View("newChef");
+            }
         }
 
         [Route("dishes")]
         [HttpGet]
         public IActionResult dishes()
         {
-            return View("dishIndex");
+            List<Dish>AllDishes = dbContext.MyDishes.Include(c => c.Creator).ToList();
+            return View("dishIndex", AllDishes);
         }
 
         [Route("addDish")]
         [HttpGet]
         public IActionResult addDish()
         {
-            List<Chef>AllChefs = dbContext.MyChefs.ToList();
+            List<Chef> AllChefs = dbContext.MyChefs.Include(Dish => Dish.CreatedDishes).ToList();
             ViewBag.cooks = AllChefs;
-            return View("newDish", AllChefs);
+            return View("newDish");
+        }
+
+        [Route("makeDish")]
+        [HttpPost]
+        public IActionResult makeDish(Dish createdDish)
+        {
+            if (ModelState.IsValid) {
+                createdDish.CreatedAt = DateTime.Now;
+                createdDish.UpdatedAt = DateTime.Now;
+                dbContext.Add(createdDish);
+                dbContext.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                List<Chef> AllChefs = dbContext.MyChefs.Include(Dish => Dish.CreatedDishes).ToList();
+                ViewBag.cooks = AllChefs;
+                return View ("newDish");
+            }
         }
     }
 }
